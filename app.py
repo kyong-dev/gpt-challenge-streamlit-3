@@ -169,7 +169,7 @@ with st.sidebar:
             temperature=0.1,
             model="gpt-4o",
             streaming=True,
-            openai_api_key=openai_api_key,
+            api_key=openai_api_key,
         )
         if url:
             if ".xml" not in url:
