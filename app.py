@@ -195,4 +195,4 @@ if api_key and not processing:
             | RunnableLambda(choose_answer)
         )
         result = chain.invoke(query)
-        st.markdown(result.content.replace("$", "\$"))
+        st.markdown(result.content.replace("$", "dollars"))
