@@ -149,7 +149,12 @@ def load_website(url):
     embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
     cache_dir = LocalFileStore("./.cache/")
     cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
-    vector_store = FAISS.from_documents(docs, cached_embeddings)
+    faiss_embeddings = None
+    if cached_embeddings:
+        faiss_embeddings = cached_embeddings
+    else:
+        faiss_embeddings = embeddings
+    vector_store = FAISS.from_documents(docs, faiss_embeddings)
     return vector_store.as_retriever()
 
 
