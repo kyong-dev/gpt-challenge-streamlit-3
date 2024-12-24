@@ -149,7 +149,7 @@ def load_website(url, openai_api_key):
 
 
 openai_api_key = None
-if os.getenv("OPENAI_API_KEY"):
+if os.getenv("OPENAI_API_KEY") is not None and os.getenv("OPENAI_API_KEY") != "":
     openai_api_key = os.getenv("OPENAI_API_KEY")
 
 retriever=None
@@ -158,8 +158,7 @@ query = None
 llm = None
 
 with st.sidebar:
-    if not openai_api_key:
-        openai_api_key = st.text_input("Write down your OpenAI key", placeholder="sk-proj-NDE*********")
+    openai_api_key = st.text_input("Write down your OpenAI key", placeholder="sk-proj-NDE*********")
 
     search_button = st.button("Search")
 
