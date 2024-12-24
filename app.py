@@ -9,6 +9,7 @@ from langchain.storage import LocalFileStore
 from langchain.embeddings import CacheBackedEmbeddings
 import requests
 from bs4 import BeautifulSoup
+import os
 import streamlit as st
 
 
@@ -47,12 +48,6 @@ answers_prompt = ChatPromptTemplate.from_template(
     Question: {question}
 """
 )
-
-openai_api_key = None
-retriever=None
-processing = False
-query = None
-llm = None
 
 def get_answers(inputs):
     docs = inputs["docs"]
@@ -146,7 +141,6 @@ def load_website(url, openai_api_key):
     )
     loader.requests_per_second = 2
     docs = loader.load_and_split(text_splitter=splitter)
-    print(docs)
     embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
     cache_dir = LocalFileStore("./.cache/")
     cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
@@ -154,14 +148,25 @@ def load_website(url, openai_api_key):
     return vector_store.as_retriever()
 
 
+openai_api_key = None
+if os.getenv("OPENAI_API_KEY"):
+    openai_api_key = os.getenv("OPENAI_API_KEY")
+
+retriever=None
+processing = False
+query = None
+llm = None
+
 with st.sidebar:
-    openai_api_key = st.text_input("Write down your OpenAI key", placeholder="sk-proj-NDE*********")
+    if not openai_api_key:
+        openai_api_key = st.text_input("Write down your OpenAI key", placeholder="sk-proj-NDE*********")
 
     search_button = st.button("Search")
 
     st.write("<a href='https://github.com/kyong-dev/gpt-challenge-streamlit-3'>https://github.com/kyong-dev/gpt-challenge-streamlit-3</a>", unsafe_allow_html=True)
     url = st.text_input("URL", value="https://developers.cloudflare.com/sitemap-0.xml")
     if openai_api_key and not processing:
+        os.getenv("OPENAI_API_KEY") = openai_api_key
         llm = ChatOpenAI(
             temperature=0.1,
             model="gpt-4o",
