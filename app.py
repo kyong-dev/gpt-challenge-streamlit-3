@@ -146,6 +146,7 @@ def load_website(url):
     )
     loader.requests_per_second = 2
     docs = loader.load_and_split(text_splitter=splitter)
+    print(docs)
     embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
     cache_dir = LocalFileStore("./.cache/")
     cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
