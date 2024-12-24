@@ -134,7 +134,7 @@ def parse_page(soup):
 
 
 @st.cache_resource(show_spinner="Loading website...")
-def load_website(url):
+def load_website(url, openai_api_key):
     splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
         chunk_size=1000,
         chunk_overlap=200,
@@ -150,12 +150,7 @@ def load_website(url):
     embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
     cache_dir = LocalFileStore("./.cache/")
     cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
-    faiss_embeddings = None
-    if cached_embeddings:
-        faiss_embeddings = cached_embeddings
-    else:
-        faiss_embeddings = embeddings
-    vector_store = FAISS.from_documents(docs, faiss_embeddings)
+    vector_store = FAISS.from_documents(docs, cached_embeddings)
     return vector_store.as_retriever()
 
 
@@ -178,13 +173,12 @@ with st.sidebar:
                 with st.sidebar:
                     st.error("Please write down a Sitemap URL.")
             else:
-                retriever = load_website(url)
+                retriever = load_website(url, openai_api_key)
     else:
         st.error("Please write down your OpenAI key.")
 
 
 if openai_api_key and not processing:
-    retriever = load_website(url)
     query = st.text_input("Ask a question to the website.")
     if query:
         chain = (
