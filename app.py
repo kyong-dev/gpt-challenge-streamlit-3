@@ -129,7 +129,7 @@ def parse_page(soup):
 
 
 @st.cache_resource(show_spinner="Loading website...")
-def load_website(url, openai_api_key):
+def load_website(url):
     splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
         chunk_size=1000,
         chunk_overlap=200,
@@ -141,7 +141,7 @@ def load_website(url, openai_api_key):
     )
     loader.requests_per_second = 2
     docs = loader.load_and_split(text_splitter=splitter)
-    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+    embeddings = OpenAIEmbeddings()
     cache_dir = LocalFileStore("./.cache/")
     cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
     vector_store = FAISS.from_documents(docs, cached_embeddings)
@@ -165,6 +165,7 @@ with st.sidebar:
     st.write("<a href='https://github.com/kyong-dev/gpt-challenge-streamlit-3'>https://github.com/kyong-dev/gpt-challenge-streamlit-3</a>", unsafe_allow_html=True)
     url = st.text_input("URL", value="https://developers.cloudflare.com/sitemap-0.xml")
     if openai_api_key and not processing:
+        os.environ["OPENAI_API_KEY"] = openai_api_key
         llm = ChatOpenAI(
             temperature=0.1,
             model="gpt-4o",
