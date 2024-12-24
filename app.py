@@ -160,7 +160,7 @@ with st.sidebar:
 
     st.write("<a href='https://github.com/kyong-dev/gpt-challenge-streamlit-3'>https://github.com/kyong-dev/gpt-challenge-streamlit-3</a>", unsafe_allow_html=True)
     url = st.text_input("URL", value="https://developers.cloudflare.com/sitemap-0.xml")
-    if api_key and not processing:
+    if openai_api_key and not processing:
         llm = ChatOpenAI(
             temperature=0.1,
             model="gpt-4o",
