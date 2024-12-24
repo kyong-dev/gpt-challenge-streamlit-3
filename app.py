@@ -147,14 +147,14 @@ def load_website(url):
     vector_store = FAISS.from_documents(docs, cached_embeddings)
     return vector_store.as_retriever()
 
-api_key = None
+openai_api_key = None
 retriever=None
 processing = False
 query = None
 llm = None
 
 with st.sidebar:
-    api_key = st.text_input("Write down your OpenAI key", placeholder="sk-proj-NDE*********")
+    openai_api_key = st.text_input("Write down your OpenAI key", placeholder="sk-proj-NDE*********")
 
     search_button = st.button("Search")
 
@@ -165,7 +165,7 @@ with st.sidebar:
             temperature=0.1,
             model="gpt-4o",
             streaming=True,
-            api_key=api_key,
+            openai_api_key=openai_api_key,
         )
         if url:
             if ".xml" not in url:
@@ -177,7 +177,7 @@ with st.sidebar:
         st.error("Please write down your OpenAI key.")
 
 
-if api_key and not processing:
+if openai_api_key and not processing:
     retriever = load_website(url)
     query = st.text_input("Ask a question to the website.")
     if query:
