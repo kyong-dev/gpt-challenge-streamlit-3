@@ -177,7 +177,7 @@ with st.sidebar:
                 with st.sidebar:
                     st.error("Please write down a Sitemap URL.")
             else:
-                retriever = load_website(url, openai_api_key)
+                retriever = load_website(url)
     else:
         st.error("Please write down your OpenAI key.")
 
