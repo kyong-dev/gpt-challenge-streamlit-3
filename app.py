@@ -48,6 +48,11 @@ answers_prompt = ChatPromptTemplate.from_template(
 """
 )
 
+openai_api_key = None
+retriever=None
+processing = False
+query = None
+llm = None
 
 def get_answers(inputs):
     docs = inputs["docs"]
@@ -141,17 +146,12 @@ def load_website(url):
     )
     loader.requests_per_second = 2
     docs = loader.load_and_split(text_splitter=splitter)
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
     cache_dir = LocalFileStore("./.cache/")
     cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
     vector_store = FAISS.from_documents(docs, cached_embeddings)
     return vector_store.as_retriever()
 
-openai_api_key = None
-retriever=None
-processing = False
-query = None
-llm = None
 
 with st.sidebar:
     openai_api_key = st.text_input("Write down your OpenAI key", placeholder="sk-proj-NDE*********")
