@@ -152,10 +152,6 @@ openai_api_key = None
 if os.getenv("OPENAI_API_KEY") is not None and os.getenv("OPENAI_API_KEY") != "":
     openai_api_key = os.getenv("OPENAI_API_KEY")
 
-retriever=None
-processing = False
-query = None
-llm = None
 
 with st.sidebar:
     openai_api_key = st.text_input("Write down your OpenAI key", placeholder="sk-proj-NDE*********")
@@ -164,25 +160,25 @@ with st.sidebar:
 
     st.write("<a href='https://github.com/kyong-dev/gpt-challenge-streamlit-3'>https://github.com/kyong-dev/gpt-challenge-streamlit-3</a>", unsafe_allow_html=True)
     url = st.text_input("URL", value="https://developers.cloudflare.com/sitemap-0.xml")
-    if openai_api_key and not processing:
+    if openai_api_key and search_button:
         os.environ["OPENAI_API_KEY"] = openai_api_key
-        llm = ChatOpenAI(
-            temperature=0.1,
-            model="gpt-4o",
-            streaming=True,
-            api_key=openai_api_key,
-        )
         if url:
             if ".xml" not in url:
                 with st.sidebar:
                     st.error("Please write down a Sitemap URL.")
-            else:
-                retriever = load_website(url)
     else:
         st.error("Please write down your OpenAI key.")
 
+if os.environ["OPENAI_API_KEY"]:
+    llm = ChatOpenAI(
+        temperature=0.1,
+        model="gpt-4o",
+        streaming=True,
+        api_key=os.environ["OPENAI_API_KEY"],
+    )
 
-if openai_api_key and not processing:
+if os.environ["OPENAI_API_KEY"] and url:
+    retriever = load_website(url)
     query = st.text_input("Ask a question to the website.")
     if query:
         chain = (
