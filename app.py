@@ -151,6 +151,7 @@ api_key = None
 retriever=None
 processing = False
 query = None
+llm = None
 
 with st.sidebar:
     api_key = st.text_input("Write down your OpenAI key", placeholder="sk-proj-NDE*********")
@@ -177,12 +178,6 @@ with st.sidebar:
 
 
 if api_key and not processing:
-    llm = ChatOpenAI(
-        temperature=0.1,
-        model="gpt-4o",
-        streaming=True,
-        api_key=api_key,
-    )
     retriever = load_website(url)
     query = st.text_input("Ask a question to the website.")
     if query:
